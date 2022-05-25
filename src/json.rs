@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use crate::{
     display::context::{all_matched_lines_filled, opposite_positions},
     display::hunks::{matched_lines_for_hunk, matched_pos_to_hunks, merge_adjacent},
-    lines::LineNumber,
     display::side_by_side::lines_with_novel,
+    lines::LineNumber,
     syntax::{AtomKind, MatchKind, MatchedPos, TokenKind as SyntaxTokenKind},
     DiffResult, FileContent, MaxLine,
 };
@@ -75,14 +75,26 @@ impl From<DiffResult> for File {
 
                 let language = summary.language.clone().unwrap_or_else(|| "Text".into());
                 if hunks.is_empty() {
-                    return File::with_status(&language, &summary.rhs_display_path, Status::Unchanged);
+                    return File::with_status(
+                        &language,
+                        &summary.rhs_display_path,
+                        Status::Unchanged,
+                    );
                 }
 
                 if lhs_src.is_empty() {
-                    return File::with_status(&language, &summary.rhs_display_path, Status::Created);
+                    return File::with_status(
+                        &language,
+                        &summary.rhs_display_path,
+                        Status::Created,
+                    );
                 }
                 if rhs_src.is_empty() {
-                    return File::with_status(&language, &summary.rhs_display_path, Status::Deleted);
+                    return File::with_status(
+                        &language,
+                        &summary.rhs_display_path,
+                        Status::Deleted,
+                    );
                 }
 
                 let lhs_lines = lhs_src.split('\n').collect::<Vec<&str>>();
@@ -90,8 +102,12 @@ impl From<DiffResult> for File {
 
                 let (lhs_lines_with_novel, rhs_lines_with_novel) =
                     lines_with_novel(&summary.lhs_positions, &summary.rhs_positions);
-                let matched_lines =
-                    all_matched_lines_filled(&summary.lhs_positions, &summary.rhs_positions, &lhs_lines, &rhs_lines);
+                let matched_lines = all_matched_lines_filled(
+                    &summary.lhs_positions,
+                    &summary.rhs_positions,
+                    &lhs_lines,
+                    &rhs_lines,
+                );
 
                 let mut chunks = Vec::with_capacity(hunks.len());
                 for hunk in hunks.iter() {
