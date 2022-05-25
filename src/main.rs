@@ -17,6 +17,7 @@ mod constants;
 mod diff;
 mod display;
 mod files;
+mod json;
 mod line_parser;
 mod lines;
 mod options;
@@ -146,17 +147,22 @@ fn main() {
             }
 
             if lhs_path.is_dir() && rhs_path.is_dir() {
-                diff_directories(
+                let diffs = diff_directories(
                     lhs_path,
                     rhs_path,
                     &display_options,
                     node_limit,
                     byte_limit,
                     language_override,
-                )
-                .for_each(|diff_result| {
-                    print_diff_result(&display_options, &diff_result);
-                });
+                );
+
+                if display_options.use_json {
+                    json::print_directory(diffs.collect());
+                } else {
+                    diffs.for_each(|diff_result| {
+                        print_diff_result(&display_options, &diff_result);
+                    });
+                }
             } else {
                 let diff_result = diff_file(
                     &lhs_display_path,
@@ -169,7 +175,12 @@ fn main() {
                     byte_limit,
                     language_override,
                 );
-                print_diff_result(&display_options, &diff_result);
+
+                if display_options.use_json {
+                    json::print(diff_result)
+                } else {
+                    print_diff_result(&display_options, &diff_result);
+                }
             }
         }
     };

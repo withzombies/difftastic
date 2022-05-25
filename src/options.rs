@@ -31,6 +31,7 @@ pub struct DisplayOptions {
     pub display_width: usize,
     pub in_vcs: bool,
     pub syntax_highlight: bool,
+    pub use_json: bool,
 }
 
 fn app() -> clap::Command<'static> {
@@ -159,6 +160,11 @@ fn app() -> clap::Command<'static> {
                 .multiple_values(true)
                 .hide(true)
                 .allow_invalid_utf8(true),
+        )
+        .arg(
+            Arg::new("json")
+                .long("json")
+                .help("Display the diff as JSON")
         )
         .arg_required_else_help(true)
 }
@@ -347,6 +353,8 @@ pub fn parse_args() -> Mode {
 
     let use_color = should_use_color(color_output);
 
+    let use_json = matches.is_present("json");
+
     let display_options = DisplayOptions {
         background_color,
         use_color,
@@ -356,6 +364,7 @@ pub fn parse_args() -> Mode {
         display_width,
         syntax_highlight,
         in_vcs,
+        use_json,
     };
 
     Mode::Diff {

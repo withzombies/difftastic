@@ -634,6 +634,7 @@ mod tests {
             display_width: 80,
             in_vcs: false,
             syntax_highlight: true,
+            use_json: false,
         };
 
         // Basic smoke test.
@@ -724,6 +725,7 @@ mod tests {
             display_width: 80,
             syntax_highlight: true,
             in_vcs: true,
+            use_json: false,
         };
 
         // Simple smoke test.
